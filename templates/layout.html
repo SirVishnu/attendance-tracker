@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="icon" href="/static/images/favicon.ico">
     <link rel="stylesheet" href="/static/style.css">
     <title>
         {% block title %} {% endblock %}
@@ -10,7 +12,17 @@
 </head>
 <body>
     <header>
-        <nav></nav>
+        <nav class="navbar navbar-dark">
+            <div class="container-fluid">
+                <div class="navbar-left">
+                    <a href="/"><img src="/static/images/logo.jpeg" alt="Logo" height="40"></a>
+                    <h1 class="navbar-title">ATTENDANCE <span class="tracker-text">TRACKER</span></h1>
+                </div>
+                {% if session['user_id'] %}
+                <button class="logout-btn">Log out</button>
+                {% endif %}
+            </div>
+        </nav>
     </header>
     <main>
         {% block main %}{% endblock %}
