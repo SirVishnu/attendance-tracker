@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block main %}
+    <form action="/login" method="post">
+        <div>
+            <input required autocomplete="off" autofocus name="username" type="text" id="username" placeholder="Enter username">
+        </div>    
+        <div>
+            <input required autocomplete="off" name="password" type="password" id="password" placeholder="Enter password">
+        </div>    
+        <div>
+            <button type="submit">Login</button>
+        </div>            
+    </form>
+    <div>
+        <p>New user? <a href="/register">Sign up</a></p>
+    </div>
+    <div>
+        {% if error %}
+        <p style="color: red;">{{error}}</p>
+        {% endif %}
+    </div>
+    
+{% endblock %}
