@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %}
+Create
+{% endblock %}
+
+{% block main %}
+<form action="/create" method="post">
+    <div>
+        <input required autofocus autocomplete="off" type="text" name="name" placeholder="Group name">
+    </div>
+    <div>
+        <label for="subject">Do you want subgroups / subjects?</label>
+        <input type="checkbox" name="subject" id="subject" value='1'>
+    </div>
+    <div>
+        <button type="submit">Create</button>
+    </div>
+</form>
+
+    <div>
+        {% if error %}
+        <p style="color: red;">{{error}}</p>
+        {% endif %}
+    </div>
+        
+{% endblock %}

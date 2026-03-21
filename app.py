@@ -20,7 +20,35 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=30)
 @login_required
 def index():
    return render_template("index.html")
-   
+
+# create new group
+@app.route("/create", methods=['GET', 'POST'])  
+@login_required
+def create():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        subject = request.form.get('subject')
+
+        # check if name entered
+        if not name:
+            return render_template("create.html", error="enter a valid group name")
+
+        # initialize db
+        db = get_db()
+
+        # insert in db
+        if subject:
+            db.execute("INSERT INTO groups (user_id, name, use_subgroups) VALUES (?, ?, ?)", [session['user_id'], name, subject])
+        else:
+            db.execute("INSERT INTO groups (user_id, name) VALUES (?, ?)", [session['user_id'], name])
+        db.commit()
+
+        return redirect("/")
+
+    else:
+        return render_template("create.html")
+    
+
 # login route
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -48,6 +76,7 @@ def login():
     return render_template("login.html")
 
 @app.route("/logout")
+@login_required
 def logout():
     session.clear()
 

@@ -21,29 +21,14 @@ CREATE TABLE IF NOT EXISTS subjects (
     FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS students (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    group_id INTEGER NOT NULL,
-    name TEXT NOT NULL,
-    FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS sessions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     group_id INTEGER NOT NULL,
-    subject_id INTEGER,
+    subject_id INTEGER,         -- NULL if no subgroups
     date DATE NOT NULL,
+    lecture_conducted INTEGER DEFAULT 1,
+    lecture_attended INTEGER DEFAULT 0,
+    status TEXT CHECK(status IN ('present', 'absent')) NOT NULL,
     FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
     FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE SET NULL
 );
-
-CREATE TABLE IF NOT EXISTS attendance (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    session_id INTEGER NOT NULL,
-    student_id INTEGER NOT NULL,
-    status TEXT CHECK(status IN ('present', 'absent')) NOT NULL,
-    FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE,
-    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
-);
-
-
