@@ -35,6 +35,11 @@
             <a href="{{ url_for('create_subject', id=id) }}"><button style="margin-top: 20px;">+</button></a>
         </div>
     {% else %}
+
+        {% if error %}
+            <p style="color: red; text-align: center;">{{error}}</p>
+        {% endif %}
+        
         <form action="{{url_for('group', id=id)}}" method="post">
             <div>
                 <input required autocomplete="off" min="0" name="lec_attend" type="number" placeholder="Lecture attended">
@@ -50,10 +55,7 @@
             </div>
         </form>
 
-        {% if error %}
-            <p style="color: red; text-align: center;">{{error}}</p>
-        {% endif %}
-        
+
         <h4>History</h4>
         <table>
             <thead>

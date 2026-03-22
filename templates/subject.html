@@ -23,6 +23,11 @@
             <span class="value">{{attendance.conduct}}</span>
         </div>
     </div>
+
+    {% if error %}
+        <p style="color: red; text-align: center;">{{error}}</p>
+    {% endif %}
+    
     <form action="{{url_for('subject', group_id=group_id, sub_id=sub_id)}}" method="post">
         <div>
             <input required autocomplete="off" min="0" name="lec_attend" type="number" placeholder="Lecture attended">
@@ -38,9 +43,6 @@
         </div>
     </form>
 
-    {% if error %}
-        <p style="color: red; text-align: center;">{{error}}</p>
-    {% endif %}
 
     <h3>History</h3>
     <table>

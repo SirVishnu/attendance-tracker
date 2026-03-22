@@ -65,26 +65,6 @@ def group(id):
     # get history of the group
     history = db.execute("SELECT STRFTIME('%d-%m-%Y', date) as date,lecture_attended,lecture_conducted FROM sessions WHERE group_id = ? ORDER BY date DESC", [id]).fetchall()
 
-    # if user submits form for lecture
-    if request.method == 'POST':
-        attend = request.form.get("lec_attend")
-        conduct = request.form.get("lec_conduct")
-        date = request.form.get("date")
-
-        # check if all inputs are present
-        if not attend or not conduct or not date:
-            return render_template("group.html", error="please enter all the input", id=id, group=group, history=history)
-        
-        # lec attend should not be more than conduct
-        if int(attend) > int(conduct):
-            return render_template("group.html", error="lecture attend should not be greater than lecture conducted", id=id, group=group, history=history)
-
-        # save in db
-        db.execute("INSERT INTO sessions (group_id, date, lecture_conducted, lecture_attended) VALUES (?, ?, ?, ?)", [id, date, conduct, attend])
-        db.commit()
-
-        return redirect(url_for('group', id=id))
-
     # get total attendance %
     attendance = db.execute("SELECT SUM(lecture_attended) as attend, SUM(lecture_conducted) as conduct FROM sessions WHERE group_id = ? GROUP BY group_id",[id]).fetchone()
 
@@ -94,6 +74,26 @@ def group(id):
     else:
         percent = int(attendance['attend']) / int(attendance['conduct']) * 100
         percent = round(percent, 2)
+
+    # if user submits form for lecture
+    if request.method == 'POST':
+        attend = request.form.get("lec_attend")
+        conduct = request.form.get("lec_conduct")
+        date = request.form.get("date")
+
+        # check if all inputs are present
+        if not attend or not conduct or not date:
+            return render_template("group.html", error="please enter all the input",attendance=attendance, id=id, group=group, history=history)
+        
+        # lec attend should not be more than conduct
+        if int(attend) > int(conduct):
+            return render_template("group.html", error="lecture attend should not be greater than lecture conducted",attendance=attendance, id=id, group=group, history=history)
+
+        # save in db
+        db.execute("INSERT INTO sessions (group_id, date, lecture_conducted, lecture_attended) VALUES (?, ?, ?, ?)", [id, date, conduct, attend])
+        db.commit()
+
+        return redirect(url_for('group', id=id))
 
     # check if use subgroup
     if group['use_subgroups'] == 1:
@@ -140,25 +140,6 @@ def subject(group_id, sub_id):
     db = get_db()
     sub = db.execute("SELECT * FROM subjects WHERE id = ? AND group_id = ?", [sub_id, group_id]).fetchone()
 
-    # get history of the group
-    history = db.execute("SELECT STRFTIME('%d-%m-%Y', date) as date,lecture_attended,lecture_conducted FROM sessions WHERE group_id = ? AND subject_id = ? ORDER BY date DESC", [group_id, sub_id]).fetchall()
-
-    if request.method == 'POST':
-        attend = request.form.get("lec_attend")
-        conduct = request.form.get("lec_conduct")
-        date = request.form.get("date")
-        if not attend or not conduct or not date:
-            return render_template("subject.html", error="pls enter valid input", group_id=group_id,history=history, sub_id=sub_id)
-        
-        # lec attend should not be more than conduct
-        if int(attend) > int(conduct):
-            return render_template("subject.html", error="lecture attend should not be greater than lecture conducted", group_id=group_id,history=history, sub_id=sub_id)
-
-        # save in db
-        db.execute("INSERT INTO sessions (group_id, subject_id, date, lecture_conducted, lecture_attended) VALUES (?, ?,?, ?, ?)", [group_id,sub_id, date, conduct, attend])
-        db.commit()
-        return redirect(url_for('subject', group_id = group_id, sub_id=sub_id))
-
     # get total attendance %
     attendance = db.execute("SELECT SUM(lecture_attended) as attend, SUM(lecture_conducted) as conduct FROM sessions WHERE group_id = ? AND subject_id = ? GROUP BY subject_id",[group_id, sub_id]).fetchone()
 
@@ -169,6 +150,27 @@ def subject(group_id, sub_id):
         percent = int(attendance['attend']) / int(attendance['conduct']) * 100
         percent = round(percent, 2)
 
+
+    # get history of the group
+    history = db.execute("SELECT STRFTIME('%d-%m-%Y', date) as date,lecture_attended,lecture_conducted FROM sessions WHERE group_id = ? AND subject_id = ? ORDER BY date DESC", [group_id, sub_id]).fetchall()
+
+    if request.method == 'POST':
+        attend = request.form.get("lec_attend")
+        conduct = request.form.get("lec_conduct")
+        date = request.form.get("date")
+        if not attend or not conduct or not date:
+            return render_template("subject.html", error="pls enter valid input",attendance=attendance,percent=percent,sub=sub, group_id=group_id,history=history, sub_id=sub_id)
+        
+        # lec attend should not be more than conduct
+        if int(attend) > int(conduct):
+            return render_template("subject.html", error="lecture attend should not be greater than lecture conducted", attendance=attendance,percent=percent,sub=sub, group_id=group_id,history=history, sub_id=sub_id)
+
+        # save in db
+        db.execute("INSERT INTO sessions (group_id, subject_id, date, lecture_conducted, lecture_attended) VALUES (?, ?,?, ?, ?)", [group_id,sub_id, date, conduct, attend])
+        db.commit()
+        return redirect(url_for('subject', group_id = group_id, sub_id=sub_id))
+
+    
     return render_template("subject.html",attendance=attendance,history=history, percent=percent, group_id=group_id, sub_id=sub_id, sub=sub, today=datetime.date.today())
 
 # delete subjects
