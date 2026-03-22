@@ -175,6 +175,14 @@ form p a:hover {
     text-decoration: underline;
 }
 
+footer  a {
+    color: #FF6B00;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
 /* Footer Styling */
 footer {
     background-color: black;
