@@ -14,15 +14,14 @@ Login
         </div>    
         <div>
             <button type="submit">Login</button>
-        </div>            
+        </div>
+        <div>
+            <p>New user? <a href="/register">Sign up</a></p>
+        </div>
+        <div>
+            {% if error %}
+            <p style="color: red;">{{error}}</p>
+            {% endif %}
+        </div>
     </form>
-    <div>
-        <p>New user? <a href="/register">Sign up</a></p>
-    </div>
-    <div>
-        {% if error %}
-        <p style="color: red;">{{error}}</p>
-        {% endif %}
-    </div>
-    
 {% endblock %}

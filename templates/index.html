@@ -5,13 +5,15 @@ Attendance Tracker
 {% endblock %}
 
 {% block main %}
-<div>
+<div id="index-list">
    <ul>
     {% for group in groups %}
-    <a href="/group/{{group['id']}}"><li>{{group['name']}}</li></a>
+    <li><a href="/group/{{group['id']}}">{{group['name']}}</a></li>
     {% endfor %}
    </ul> 
 </div>
-<a href="/create"><button>+</button></a>
+<div class="add-btn-container">
+   <a href="/create"><button>+</button></a>
+</div>
 {% endblock %}
 

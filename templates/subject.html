@@ -4,59 +4,62 @@
 {% endblock %}
 {% block main %}
 
-    <div>
-        <a href="{{url_for('group', id=group_id)}}"><img src="/static/images/back.png" alt="back button"></a>
+<a class="back" href="{{url_for('group', id=group_id)}}"><img src="/static/images/back.png" alt="back button"></a>
+<a class="delete-btn" href="{{url_for('delete_subject', sub_id=sub_id, group_id=group_id)}}">
+    <button>Delete Subject</button>
+</a>
+<div class="page-container">
+    <div class="attendance-info">
+        <div class="stat-box">
+            <label>Attendance</label>
+            <span class="value">{{percent}}%</span>
+        </div>
+        <div class="stat-box">
+            <label>Attended</label>
+            <span class="value">{{attendance.attend}}</span>
+        </div>
+        <div class="stat-box">
+            <label>Conducted</label>
+            <span class="value">{{attendance.conduct}}</span>
+        </div>
     </div>
+    <form action="{{url_for('subject', group_id=group_id, sub_id=sub_id)}}" method="post">
         <div>
-            total attendance: {{percent}}
+            <input required autocomplete="off" min="0" name="lec_attend" type="number" placeholder="Lecture attended">
         </div>
         <div>
-            Lectures attended: {{attendance.attend}}
+            <input required autocomplete="off" min="1" name="lec_conduct" type="number" placeholder="Lecture conducted">
         </div>
         <div>
-            Lectures conducted: {{attendance.conduct}}
+            <input required type="date" name="date" value="{{ today }}">
         </div>
-        <form action="{{url_for('subject', group_id=group_id, sub_id=sub_id)}}", method="post">
-            <div>
-                <input required autocomplete="off" min="0" name="lec_attend" type="number" placeholder="Lecture attended">
-            </div>
-            <div>
-                <input required autocomplete="off" min="1" name="lec_conduct" type="number" placeholder="Lecture conducted">
-            </div>
-            <div>
-                <input required type="date" name="date" value="{{ today }}">
-            </div>
-            <div>
-                <button type="submit">Submit</button>
-            </div>
-        </form>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
 
-        <div>
-            {% if error %}
-            <p style="color: red;">{{error}}</p>
-            {% endif %}
-        </div>
+    {% if error %}
+        <p style="color: red; text-align: center;">{{error}}</p>
+    {% endif %}
 
-        <div>
-            <h3>History</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <td>Date</td>
-                        <td>Lecture attended</td>
-                        <td>Lecture conducted</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for s in history %}
-                        <tr>
-                            <td>{{s.date}}</td>
-                            <td>{{s.lecture_attended}}</td>
-                            <td>{{s.lecture_conducted}}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
+    <h3>History</h3>
+    <table>
+        <thead>
+            <tr>
+                <td>Date</td>
+                <td>Lecture attended</td>
+                <td>Lecture conducted</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in history %}
+                <tr>
+                    <td>{{s.date}}</td>
+                    <td>{{s.lecture_attended}}</td>
+                    <td>{{s.lecture_conducted}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

@@ -3,33 +3,36 @@
     {{group['name']}}
 {% endblock %}
 {% block main %}
-
-    <div>
-        <a href="/">
-            <img src="{{ url_for('static', filename='images/back.png') }}">
-        </a>
-    </div>
-
-    <div>
-        Current attendance: {{percent}}
-    </div>
-    <div>
-        lecture attended: {{attendance.attend}}
-    </div>
-    <div>
-        lecture conducted: {{attendance.conduct}}
+<a class="back" href="/">
+    <img src="{{ url_for('static', filename='images/back.png') }}">
+</a>
+<a class="delete-btn" href="{{url_for('delete_group', id=id)}}">
+    <button>Delete Group</button>
+</a>
+<div class="page-container">
+    <div class="attendance-info">
+        <div class="stat-box">
+            <label>Attendance</label>
+            <span class="value">{{percent}}%</span>
+        </div>
+        <div class="stat-box">
+            <label>Attended</label>
+            <span class="value">{{attendance.attend}}</span>
+        </div>
+        <div class="stat-box">
+            <label>Conducted</label>
+            <span class="value">{{attendance.conduct}}</span>
+        </div>
     </div>
 
     {% if group['use_subgroups'] == 1 %}
-        <div>
+        <div class="subject-list">
             <ul>
                 {% for s in subject %}
                     <li><a href="{{url_for('subject', group_id=id, sub_id=s.id)}}">{{ s.name }}</a></li>
                 {% endfor %}
             </ul>
-        </div>
-        <div>
-            <a href="{{ url_for('create_subject', id=id) }}"><button>+</button></a>
+            <a href="{{ url_for('create_subject', id=id) }}"><button style="margin-top: 20px;">+</button></a>
         </div>
     {% else %}
         <form action="{{url_for('group', id=id)}}" method="post">
@@ -47,32 +50,29 @@
             </div>
         </form>
 
-        <div>
-            {% if error %}
-                <p style="color: red;">{{error}}</p>
-            {% endif %}
-        </div>
-        <div>
-            <h4>History</h4>
-            <table>
-                <thead>
+        {% if error %}
+            <p style="color: red; text-align: center;">{{error}}</p>
+        {% endif %}
+        
+        <h4>History</h4>
+        <table>
+            <thead>
+                <tr>
+                    <td>Date</td>
+                    <td>Lecture attended</td>
+                    <td>Lecture conducted</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in history %}
                     <tr>
-                        <td>Date</td>
-                        <td>Lecture attended</td>
-                        <td>Lecture conducted</td>
+                        <td>{{s.date}}</td>
+                        <td>{{s.lecture_attended}}</td>
+                        <td>{{s.lecture_conducted}}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    {% for s in history %}
-                        <tr>
-                            <td>{{s.date}}</td>
-                            <td>{{s.lecture_attended}}</td>
-                            <td>{{s.lecture_conducted}}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                {% endfor %}
+            </tbody>
+        </table>
     {% endif %}
-
+</div>
 {% endblock %}

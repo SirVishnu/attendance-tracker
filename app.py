@@ -21,7 +21,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=30)
 def index():
    # initialize db
    db = get_db()
-   group = db.execute("SELECT * FROM groups WHERE user_id = ?", [session['user_id']])
+   group = db.execute("SELECT * FROM groups WHERE user_id = ?", [session['user_id']]).fetchall()
    return render_template("index.html",groups=group)
 
 # create new group
@@ -123,6 +123,15 @@ def create_subject(id):
 
     return render_template("create_sub.html", id=id)
 
+# delete group
+@app.route("/group/<int:id>/delete")
+@login_required
+def delete_group(id):
+    db = get_db()
+    db.execute("DELETE FROM groups WHERE id = ? AND user_id = ?",[id, session['user_id']])
+    db.commit()
+    return redirect("/")
+
 # subject route
 @app.route("/group/<int:group_id>/subject/<int:sub_id>", methods=['GET', 'POST'])   
 @login_required
@@ -161,6 +170,15 @@ def subject(group_id, sub_id):
         percent = round(percent, 2)
 
     return render_template("subject.html",attendance=attendance,history=history, percent=percent, group_id=group_id, sub_id=sub_id, sub=sub, today=datetime.date.today())
+
+# delete subjects
+@app.route("/group/<int:group_id>/subject/<int:sub_id>/delete")
+@login_required
+def delete_subject(group_id, sub_id):
+    db = get_db()
+    db.execute("DELETE FROM subjects WHERE id = ? AND group_id = ?",[sub_id, group_id])
+    db.commit()
+    return redirect(url_for('group', id=group_id))
 
 # login route
 @app.route("/login", methods=['GET', 'POST'])

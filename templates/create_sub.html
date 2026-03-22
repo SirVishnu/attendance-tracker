@@ -4,22 +4,20 @@ Create
 {% endblock %}
 Create new subject
 {% block main %}
-<div>
-    <a href="{{url_for('group', id=id)}}"><img src="/static/images/back.png" alt="back button"></a>
-</div>
-<form action="{{ url_for('create_subject', id=id) }}" method="post">
-    <div>
-        <input required autofocus autocomplete="off" type="text" name="name" placeholder="Subject name">
-    </div>
-    <div>
-        <button type="submit">Create</button>
-    </div>
-</form>
+<a class="back" href="{{url_for('group', id=id)}}"><img src="/static/images/back.png" alt="back button"></a>
+<div class="page-container">
+    <h3>Create New Subject</h3>
+    <form action="{{ url_for('create_subject', id=id) }}" method="post">
+        <div>
+            <input required autofocus autocomplete="off" type="text" name="name" placeholder="Subject name">
+        </div>
+        <div>
+            <button type="submit">Create</button>
+        </div>
+    </form>
 
-    <div>
-        {% if error %}
-        <p style="color: red;">{{error}}</p>
-        {% endif %}
-    </div>
-        
+    {% if error %}
+        <p style="color: red; text-align: center;">{{error}}</p>
+    {% endif %}
+</div>
 {% endblock %}
