@@ -5,10 +5,16 @@
 {% block main %}
 
     <div>
-        <a href="{{url_for('group', id=group_id)}}"><button><-</button></a>
+        <a href="{{url_for('group', id=group_id)}}"><img src="/static/images/back.png" alt="back button"></a>
     </div>
         <div>
-            total attendance
+            total attendance: {{percent}}
+        </div>
+        <div>
+            Lectures attended: {{attendance.attend}}
+        </div>
+        <div>
+            Lectures conducted: {{attendance.conduct}}
         </div>
         <form action="{{url_for('subject', group_id=group_id, sub_id=sub_id)}}", method="post">
             <div>

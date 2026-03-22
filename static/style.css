@@ -1,4 +1,7 @@
-
+body{
+    background-color: #121212;
+    color: white;
+}
 .navbar {
     background-color: black;
     padding: 15px 0;

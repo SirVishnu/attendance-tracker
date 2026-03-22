@@ -5,7 +5,19 @@
 {% block main %}
 
     <div>
-        <a href="/"><button><-</button></a>
+        <a href="/">
+            <img src="{{ url_for('static', filename='images/back.png') }}">
+        </a>
+    </div>
+
+    <div>
+        Current attendance: {{percent}}
+    </div>
+    <div>
+        lecture attended: {{attendance.attend}}
+    </div>
+    <div>
+        lecture conducted: {{attendance.conduct}}
     </div>
 
     {% if group['use_subgroups'] == 1 %}
@@ -20,9 +32,6 @@
             <a href="{{ url_for('create_subject', id=id) }}"><button>+</button></a>
         </div>
     {% else %}
-        <div>
-            total attendance
-        </div>
         <form action="{{url_for('group', id=id)}}" method="post">
             <div>
                 <input required autocomplete="off" min="0" name="lec_attend" type="number" placeholder="Lecture attended">
@@ -37,6 +46,13 @@
                 <button type="submit">Submit</button>
             </div>
         </form>
+
+        <div>
+            <h4>History</h4>
+            <ul>
+                
+            </ul>
+        </div>
     {% endif %}
 
     <div>

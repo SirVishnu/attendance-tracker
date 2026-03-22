@@ -62,10 +62,7 @@ def group(id):
     db = get_db()
     group = db.execute("SELECT * FROM groups WHERE user_id = ? AND id = ?", [session['user_id'], id]).fetchone()
 
-    if group['use_subgroups'] == 1:
-        sub_group = db.execute("SELECT * FROM subjects WHERE group_id = ?", [id]).fetchall()
-        return render_template("group.html", group=group, subject=sub_group, id=id)
-    
+
     # if user submits form for lecture
     if request.method == 'POST':
         attend = request.form.get("lec_attend")
@@ -84,7 +81,24 @@ def group(id):
         db.execute("INSERT INTO sessions (group_id, date, lecture_conducted, lecture_attended) VALUES (?, ?, ?, ?)", [id, date, conduct, attend])
         db.commit()
 
-    return render_template("group.html",group=group, id=id, today=datetime.date.today())
+        return redirect(url_for('group', id=id))
+
+    # get total attendance %
+    attendance = db.execute("SELECT SUM(lecture_attended) as attend, SUM(lecture_conducted) as conduct FROM sessions WHERE group_id = ? GROUP BY group_id",[id]).fetchone()
+
+    if attendance is None:
+        percent = 0
+        attendance = {'attend': 0, 'conduct': 0}
+    else:
+        percent = int(attendance['attend']) / int(attendance['conduct']) * 100
+        percent = round(percent, 2)
+
+    # check if use subgroup
+    if group['use_subgroups'] == 1:
+        sub_group = db.execute("SELECT * FROM subjects WHERE group_id = ?", [id]).fetchall()
+        return render_template("group.html",attendance=attendance,percent=percent, group=group, subject=sub_group, id=id)
+
+    return render_template("group.html",attendance=attendance, group=group, id=id,percent=percent, today=datetime.date.today())
 
 # create new subject
 @app.route("/group/<int:id>/create", methods=['GET', 'POST'])
@@ -114,6 +128,7 @@ def subject(group_id, sub_id):
     # initialize db
     db = get_db()
     sub = db.execute("SELECT * FROM subjects WHERE id = ? AND group_id = ?", [sub_id, group_id]).fetchone()
+
     if request.method == 'POST':
         attend = request.form.get("lec_attend")
         conduct = request.form.get("lec_conduct")
@@ -128,8 +143,19 @@ def subject(group_id, sub_id):
         # save in db
         db.execute("INSERT INTO sessions (group_id, subject_id, date, lecture_conducted, lecture_attended) VALUES (?, ?,?, ?, ?)", [group_id,sub_id, date, conduct, attend])
         db.commit()
+        return redirect(url_for('subject', group_id = group_id, sub_id=sub_id))
 
-    return render_template("subject.html",group_id=group_id, sub_id=sub_id, sub=sub, today=datetime.date.today())
+    # get total attendance %
+    attendance = db.execute("SELECT SUM(lecture_attended) as attend, SUM(lecture_conducted) as conduct FROM sessions WHERE group_id = ? AND subject_id = ? GROUP BY subject_id",[group_id, sub_id]).fetchone()
+
+    if attendance is None:
+        percent = 0
+        attendance = {'attend': 0, 'conduct': 0}
+    else:
+        percent = int(attendance['attend']) / int(attendance['conduct']) * 100
+        percent = round(percent, 2)
+
+    return render_template("subject.html",attendance=attendance, percent=percent, group_id=group_id, sub_id=sub_id, sub=sub, today=datetime.date.today())
 
 # login route
 @app.route("/login", methods=['GET', 'POST'])
