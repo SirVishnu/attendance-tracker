@@ -48,17 +48,31 @@
         </form>
 
         <div>
+            {% if error %}
+                <p style="color: red;">{{error}}</p>
+            {% endif %}
+        </div>
+        <div>
             <h4>History</h4>
-            <ul>
-                
-            </ul>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Date</td>
+                        <td>Lecture attended</td>
+                        <td>Lecture conducted</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in history %}
+                        <tr>
+                            <td>{{s.date}}</td>
+                            <td>{{s.lecture_attended}}</td>
+                            <td>{{s.lecture_conducted}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     {% endif %}
-
-    <div>
-        {% if error %}
-        <p style="color: red;">{{error}}</p>
-        {% endif %}
-    </div>
 
 {% endblock %}
