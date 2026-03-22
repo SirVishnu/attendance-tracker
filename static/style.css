@@ -132,6 +132,20 @@ input[type="date"]:focus {
     box-shadow: 0 0 5px rgba(255, 107, 0, 0.5);
 }
 
+/* Number Input Spinner Button Styling */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    background-color: #FF6B00;
+    color: white;
+}
+
+input[type="number"]::-webkit-outer-spin-button:hover,
+input[type="number"]::-webkit-inner-spin-button:hover {
+    background-color: #e55a00;
+}
+
 button {
     background-color: #FF6B00;
     color: white;
