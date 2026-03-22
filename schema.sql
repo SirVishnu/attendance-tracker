@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS sessions (
     date DATE NOT NULL,
     lecture_conducted INTEGER DEFAULT 1,
     lecture_attended INTEGER DEFAULT 0,
-    status TEXT CHECK(status IN ('present', 'absent')) NOT NULL,
     FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
     FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE SET NULL
 );

@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, render_template, request, session, redirect, g
+from flask import Flask, render_template, request, session, redirect, g, url_for
 from database import get_db, close_db
 from help import login_required
 from sqlite3 import IntegrityError
@@ -19,7 +19,10 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=30)
 @app.route("/")
 @login_required
 def index():
-   return render_template("index.html")
+   # initialize db
+   db = get_db()
+   group = db.execute("SELECT * FROM groups WHERE user_id = ?", [session['user_id']])
+   return render_template("index.html",groups=group)
 
 # create new group
 @app.route("/create", methods=['GET', 'POST'])  
@@ -47,7 +50,86 @@ def create():
 
     else:
         return render_template("create.html")
+
+
+
+# group route
+@app.route("/group/<int:id>", methods=['GET', 'POST'])
+@login_required
+def group(id):
+   
+    # initialize db
+    db = get_db()
+    group = db.execute("SELECT * FROM groups WHERE user_id = ? AND id = ?", [session['user_id'], id]).fetchone()
+
+    if group['use_subgroups'] == 1:
+        sub_group = db.execute("SELECT * FROM subjects WHERE group_id = ?", [id]).fetchall()
+        return render_template("group.html", group=group, subject=sub_group, id=id)
     
+    # if user submits form for lecture
+    if request.method == 'POST':
+        attend = request.form.get("lec_attend")
+        conduct = request.form.get("lec_conduct")
+        date = request.form.get("date")
+
+        # check if all inputs are present
+        if not attend or not conduct or not date:
+            return render_template("group.html", error="please enter all the input", id=id, group=group)
+        
+        # lec attend should not be more than conduct
+        if int(attend) > int(conduct):
+            return render_template("group.html", error="lecture attend should not be greater than lecture conducted", id=id, group=group)
+
+        # save in db
+        db.execute("INSERT INTO sessions (group_id, date, lecture_conducted, lecture_attended) VALUES (?, ?, ?, ?)", [id, date, conduct, attend])
+        db.commit()
+
+    return render_template("group.html",group=group, id=id, today=datetime.date.today())
+
+# create new subject
+@app.route("/group/<int:id>/create", methods=['GET', 'POST'])
+@login_required
+def create_subject(id):
+    if request.method == 'POST':
+        name = request.form.get("name")
+
+        if not name:
+            return render_template("create_sub.html", error="please enter subject name", id=id)
+        
+        # initialize db
+        db = get_db()
+
+        # insert in db
+        db.execute("INSERT INTO subjects (group_id, name) VALUES (?, ?)", [id, name])
+        db.commit()
+
+        return redirect(url_for('group', id=id))
+
+    return render_template("create_sub.html", id=id)
+
+# subject route
+@app.route("/group/<int:group_id>/subject/<int:sub_id>", methods=['GET', 'POST'])   
+@login_required
+def subject(group_id, sub_id):
+    # initialize db
+    db = get_db()
+    sub = db.execute("SELECT * FROM subjects WHERE id = ? AND group_id = ?", [sub_id, group_id]).fetchone()
+    if request.method == 'POST':
+        attend = request.form.get("lec_attend")
+        conduct = request.form.get("lec_conduct")
+        date = request.form.get("date")
+        if not attend or not conduct or not date:
+            return render_template("subject.html", error="pls enter valid input", group_id=group_id, sub_id=sub_id)
+        
+        # lec attend should not be more than conduct
+        if int(attend) > int(conduct):
+            return render_template("subject.html", error="lecture attend should not be greater than lecture conducted", group_id=group_id, sub_id=sub_id)
+
+        # save in db
+        db.execute("INSERT INTO sessions (group_id, subject_id, date, lecture_conducted, lecture_attended) VALUES (?, ?,?, ?, ?)", [group_id,sub_id, date, conduct, attend])
+        db.commit()
+
+    return render_template("subject.html",group_id=group_id, sub_id=sub_id, sub=sub, today=datetime.date.today())
 
 # login route
 @app.route("/login", methods=['GET', 'POST'])

@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block title %}
+    {{group['name']}}
+{% endblock %}
+{% block main %}
+
+    <div>
+        <a href="/"><button><-</button></a>
+    </div>
+
+    {% if group['use_subgroups'] == 1 %}
+        <div>
+            <ul>
+                {% for s in subject %}
+                    <li><a href="{{url_for('subject', group_id=id, sub_id=s.id)}}">{{ s.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <a href="{{ url_for('create_subject', id=id) }}"><button>+</button></a>
+        </div>
+    {% else %}
+        <div>
+            total attendance
+        </div>
+        <form action="{{url_for('group', id=id)}}" method="post">
+            <div>
+                <input required autocomplete="off" min="0" name="lec_attend" type="number" placeholder="Lecture attended">
+            </div>
+            <div>
+                <input required autocomplete="off" min="1" name="lec_conduct" type="number" placeholder="Lecture conducted">
+            </div>
+            <div>
+                <input required type="date" name="date" value="{{ today }}">
+            </div>
+            <div>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    {% endif %}
+
+    <div>
+        {% if error %}
+        <p style="color: red;">{{error}}</p>
+        {% endif %}
+    </div>
+
+{% endblock %}

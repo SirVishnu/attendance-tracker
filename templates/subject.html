@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block title %}
+    {{sub.name}}
+{% endblock %}
+{% block main %}
+
+    <div>
+        <a href="{{url_for('group', id=group_id)}}"><button><-</button></a>
+    </div>
+        <div>
+            total attendance
+        </div>
+        <form action="{{url_for('subject', group_id=group_id, sub_id=sub_id)}}", method="post">
+            <div>
+                <input required autocomplete="off" min="0" name="lec_attend" type="number" placeholder="Lecture attended">
+            </div>
+            <div>
+                <input required autocomplete="off" min="1" name="lec_conduct" type="number" placeholder="Lecture conducted">
+            </div>
+            <div>
+                <input required type="date" name="date" value="{{ today }}">
+            </div>
+            <div>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+
+        <div>
+            {% if error %}
+            <p style="color: red;">{{error}}</p>
+            {% endif %}
+        </div>
+
+{% endblock %}
