@@ -1,7 +1,9 @@
 # Attendance Tracker
 
+#### Description:
 A personal attendance tracking web application built with flask and sqlite.
-Track your lecture attendance across multiple groups and subjects.
+Track your lecture attendance across multiple groups and subjects. [Site link][https://sovietgeneral.pythonanywhere.com/]
+
 
 ## Features
 
@@ -33,3 +35,5 @@ Track your lecture attendance across multiple groups and subjects.
 - Attendance percentage = (lectures attended / lectures conducted) * 100
 - Deleting a group removes all its subjects and sessions automatically
 - Deleting a subject removes all its sessions automatically
+
+[https://sovietgeneral.pythonanywhere.com/]: https://sovietgeneral.pythonanywhere.com/
